@@ -1,0 +1,208 @@
+# Instructions
+
+Pendant votre interaction avec l'utilisateur, si vous trouvez quelque chose de réutilisable dans ce projet (par exemple, version d'une bibliothèque, nom de modèle), en particulier concernant une correction à une erreur que vous avez commise ou une correction que vous avez reçue, vous devez le noter en créant une leçon dans un fichier Leçon.md au même niveau que le fichier `.cursorrules` afin de ne pas commettre la même erreur à nouveau.
+
+Vous devriez également utiliser le fichier `.cursorrules` comme bloc-notes pour organiser vos pensées. Particulièrement lorsque vous recevez une nouvelle tâche, vous devriez d'abord examiner le contenu du bloc-notes, effacer les anciennes tâches différentes si nécessaire, expliquer d'abord la tâche, et planifier les étapes que vous devez suivre pour accomplir la tâche. Vous pouvez utiliser des marqueurs de tâches pour indiquer la progression, par exemple :
+[X] Tâche 1
+[ ] Tâche 2
+
+Mettez également à jour la progression de la tâche dans le bloc-notes lorsque vous terminez une sous-tâche.
+Particulièrement lorsque vous avez terminé une étape importante, il sera utile d'améliorer votre profondeur d'accomplissement de la tâche en utilisant le bloc-notes pour réfléchir et planifier.
+L'objectif est de vous aider à maintenir une vue d'ensemble ainsi que la progression de la tâche. Référez-vous toujours au bloc-notes lorsque vous planifiez l'étape suivante.
+
+Important:
+-Tu travailles généralement dans un environnement windows.
+-Essaie toujours avant d'executer l'application le dossier courant
+-Analyse bien chaques fichier avant de l'executer
+-Utilise le mcp databutton pour l'execution de tes tâches pour plus de performance au niveau des structurations.
+-Si on te demande de créer une application complète agis comme un chef de projet et un développeur sénior fullstack en même temps. Tu créera l'architecture complète, les fonctionnalités dans un fichier pdr que tu va créer et que tu mettra au même niveau que .cursorrules aussi pour que tu te repère facilement.
+
+# Outils
+
+Notez que tous les outils sont en python. Donc, dans le cas où vous auriez besoin de faire du traitement par lots, vous pouvez toujours consulter les fichiers python et écrire votre propre script.
+
+## Vérification par capture d'écran
+
+Le flux de travail de vérification par capture d'écran vous permet de capturer des captures d'écran de pages web et de vérifier leur apparence à l'aide de LLMs. Les outils suivants sont disponibles :
+
+1. Capture d'écran :
+```bash
+venv/bin/python tools/screenshot_utils.py URL [--output OUTPUT] [--width WIDTH] [--height HEIGHT]
+```
+
+2. Vérification LLM avec images :
+```bash
+venv/bin/python tools/llm_api.py --prompt "Votre question de vérification" --provider {openai|anthropic} --image path/to/screenshot.png
+```
+
+Exemple de flux de travail :
+```python
+from screenshot_utils import take_screenshot_sync
+from llm_api import query_llm
+
+# Prendre une capture d'écran
+
+screenshot_path = take_screenshot_sync('https://example.com', 'screenshot.png')
+
+# Vérifier avec LLM
+
+response = query_llm(
+    "Quelle est la couleur de fond et le titre de cette page web ?",
+    provider="openai",  # ou "anthropic"
+    image_path=screenshot_path
+)
+print(response)
+```
+
+## LLM
+
+Vous avez toujours un LLM à vos côtés pour vous aider dans votre tâche. Pour des tâches simples, vous pouvez invoquer le LLM en exécutant la commande suivante :
+```
+venv/bin/python ./tools/llm_api.py --prompt "Quelle est la capitale de la France ?" --provider "anthropic"
+```
+
+L'API LLM prend en charge plusieurs fournisseurs :
+- OpenAI (par défaut, modèle : gpt-4o)
+- Azure OpenAI (modèle : configuré via AZURE_OPENAI_MODEL_DEPLOYMENT dans le fichier .env, par défaut gpt-4o-ms)
+- DeepSeek (modèle : deepseek-chat)
+- Anthropic (modèle : claude-3-sonnet-20240229)
+- Gemini (modèle : gemini-pro)
+- LLM local (modèle : Qwen/Qwen2.5-32B-Instruct-AWQ)
+
+Mais généralement, c'est une meilleure idée de vérifier le contenu du fichier et d'utiliser les API dans le fichier `tools/llm_api.py` pour invoquer le LLM si nécessaire.
+
+## Navigateur web
+
+Vous pouvez utiliser le fichier `tools/web_scraper.py` pour extraire des données du web.
+```
+venv/bin/python ./tools/web_scraper.py --max-concurrent 3 URL1 URL2 URL3
+```
+Cela affichera le contenu des pages web.
+
+## Moteur de recherche
+
+Vous pouvez utiliser le fichier `tools/search_engine.py` pour rechercher sur le web.
+```
+venv/bin/python ./tools/search_engine.py "vos mots-clés de recherche"
+```
+Cela affichera les résultats de recherche dans le format suivant :
+```
+URL: https://example.com
+Titre: Ceci est le titre du résultat de recherche
+Extrait: Ceci est un extrait du résultat de recherche
+```
+Si nécessaire, vous pouvez ensuite utiliser le fichier `web_scraper.py` pour extraire le contenu de la page web.
+
+# Leçons
+
+## Leçons spécifiées par l'utilisateur
+
+- Si Vous avez un environnement virtuel python dans ./venv. Utilisez-le.
+- Incluez des informations utiles pour le débogage dans la sortie du programme.
+- Lisez le fichier avant d'essayer de le modifier.
+- En raison de la limite de Cursor, lorsque vous utilisez `git` et `gh` et que vous devez soumettre un message de commit multiligne, écrivez d'abord le message dans un fichier, puis utilisez `git commit -F <nom_du_fichier>` ou une commande similaire pour valider. Puis supprimez le fichier. Incluez "[Cursor] " dans le message de commit et le titre de la PR.
+
+## Leçons apprises par Cursor
+
+- Pour les résultats de recherche, assurez-vous de gérer correctement les différents encodages de caractères (UTF-8) pour les requêtes internationales
+- Ajoutez des informations de débogage à stderr tout en gardant la sortie principale propre dans stdout pour une meilleure intégration de pipeline
+- Lors de l'utilisation des styles seaborn dans matplotlib, utilisez 'seaborn-v0_8' au lieu de 'seaborn' comme nom de style en raison des changements récents de version de seaborn
+- Utilisez 'gpt-4o' comme nom de modèle pour les capacités de vision GPT-4 d'OpenAI
+- Lors de la recherche d'actualités récentes, utilisez l'année en cours (2025) au lieu des années précédentes, ou utilisez simplement le mot-clé "récent" pour obtenir les dernières informations
+- Dans Next.js, ajoutez toujours la directive 'use client' au début des fichiers qui utilisent des hooks React ou des fonctionnalités spécifiques au client
+- Utilisez InternalAxiosRequestConfig au lieu de AxiosRequestConfig pour les intercepteurs de requête Axios
+- Dans Next.js, n'exportez pas de métadonnées depuis un composant marqué avec "use client"
+- Vérifiez toujours le répertoire courant avant d'exécuter des commandes npm
+- Assurez-vous que les classes Tailwind utilisées sont définies dans la configuration
+- Utilisez les classes Tailwind standard (comme border-gray-300) au lieu de classes personnalisées non définies (comme border-gray-200)
+- Dans PowerShell, utilisez le point-virgule (;) au lieu de && pour chaîner les commandes
+- Préférez les classes Tailwind standard aux classes personnalisées même si ces dernières sont définies dans la configuration
+
+# Bloc-notes 
+
+## Tâche actuelle: Création d'une application de chat similaire à Messenger
+
+### Description de la tâche
+Créer une application de messagerie instantanée complète avec des fonctionnalités similaires à Messenger, incluant une interface utilisateur moderne, des conversations en temps réel, et des fonctionnalités de messagerie avancées.
+
+### Plan d'action
+[X] 1. Définir les spécifications et l'architecture de l'application
+[X] 2. Créer le document PDR (Plan de Développement et Réalisation)
+[X] 3. Configurer l'environnement de développement
+[X] 4. Développer le backend
+  [X] 4.1. Mettre en place la base de données avec Supabase
+  [X] 4.2. Créer l'API pour l'authentification
+  [X] 4.3. Développer les fonctionnalités de messagerie en temps réel
+  [X] 4.4. Implémenter la gestion des utilisateurs et des contacts
+[X] 5. Développer le frontend
+  [X] 5.1. Créer l'interface utilisateur
+  [X] 5.2. Implémenter les composants de conversation
+  [X] 5.3. Développer les fonctionnalités de messagerie
+  [X] 5.4. Ajouter des fonctionnalités supplémentaires (emojis, pièces jointes, etc.)
+[X] 6. Intégrer le backend et le frontend
+[ ] 7. Tester l'application
+  [X] 7.1. Corriger les erreurs liées à la directive 'use client'
+  [X] 7.2. Corriger les erreurs de type dans les services API
+  [X] 7.3. Corriger les erreurs de métadonnées dans les composants client
+  [X] 7.4. Corriger les erreurs de configuration Tailwind
+  [X] 7.5. Corriger les erreurs de classes Tailwind non définies
+  [X] 7.6. Corriger l'erreur de classe border-border
+  [ ] 7.7. Tester les fonctionnalités de base
+[ ] 8. Déployer l'application
+
+### Progression
+- ✅ Définition des spécifications complétée dans le PDR
+- ✅ Architecture technique définie (Node.js/Express.js pour le backend, React/Next.js pour le frontend, Supabase pour la base de données)
+- ✅ Plan de développement établi avec estimation des délais
+- ✅ Soumission des spécifications de l'application via databutton
+- ✅ Configuration de l'environnement de développement
+- ✅ Développement du backend avec Express.js et Supabase
+- ✅ Implémentation des modèles de données (User, Conversation, Message)
+- ✅ Création des API RESTful pour l'authentification, les utilisateurs, les conversations et les messages
+- ✅ Intégration de Socket.IO pour la communication en temps réel
+- ✅ Création du schéma SQL pour Supabase
+- ✅ Documentation de l'API dans le README.md
+- ✅ Développement du frontend avec React/Next.js
+- ✅ Implémentation des composants de conversation et de message
+- ✅ Création des contextes pour la gestion de l'état global
+- ✅ Correction des erreurs liées à la directive 'use client'
+- ✅ Correction des erreurs de type dans les services API
+- ✅ Correction des erreurs de métadonnées dans les composants client
+- ✅ Correction des erreurs de configuration Tailwind
+- ✅ Correction des erreurs de classes Tailwind non définies (border-gray-200 → border-gray-300)
+- ✅ Correction de l'erreur de classe border-border (retour à border-gray-200)
+- 🔄 Prochaine étape: Tester les fonctionnalités de base
+
+### Erreurs rencontrées et corrections
+1. **Erreur de directive 'use client'** : Les composants utilisant des hooks React comme createContext, useState, etc. nécessitent la directive 'use client' au début du fichier dans Next.js.
+   - Solution: Ajout de la directive 'use client' au début des fichiers AuthContext.tsx, api.ts et socketService.ts.
+
+2. **Erreur de type Axios** : Les types AxiosRequestConfig ne sont plus compatibles avec les intercepteurs dans les versions récentes d'Axios.
+   - Solution: Utilisation de InternalAxiosRequestConfig au lieu de AxiosRequestConfig pour les intercepteurs.
+
+3. **Erreur d'exportation de métadonnées** : Next.js ne permet pas d'exporter des métadonnées depuis un composant marqué avec "use client".
+   - Solution: Déplacement des métadonnées dans un fichier séparé metadata.ts.
+
+4. **Erreur de classe Tailwind** : La classe border-border n'était pas définie dans la configuration Tailwind.
+   - Solution: Création du fichier tailwind.config.js avec les définitions de couleurs personnalisées et modification de globals.css pour utiliser des classes standard.
+
+5. **Erreur de classe Tailwind non définie** : La classe border-gray-200 n'était pas reconnue par Tailwind.
+   - Solution: Remplacement par border-gray-300 qui est une classe standard de Tailwind et déjà utilisée ailleurs dans l'application.
+
+6. **Erreur de classe Tailwind non définie (bis)** : La classe border-gray-300 n'était pas reconnue par Tailwind.
+   - Solution: Ajout explicite de la palette de couleurs gray dans le fichier tailwind.config.js.
+
+7. **Erreur de classe Tailwind border-border** : Même après avoir défini les couleurs gray, la classe border-border n'était toujours pas reconnue.
+   - Solution: Retour à l'utilisation de la classe standard border-gray-200 qui est maintenant correctement définie dans la configuration.
+
+8. **Erreur de syntaxe PowerShell** : Utilisation de && pour chaîner les commandes dans PowerShell, ce qui n'est pas supporté.
+   - Solution: Utilisation du point-virgule (;) pour chaîner les commandes, par exemple cd messenger-clone/client ; npm run dev.
+
+### Détails techniques
+- ✅ Configuration de Next.js pour le frontend
+- ✅ Implémentation des contextes pour l'authentification et les conversations
+- ✅ Création des composants réutilisables (MessageBubble, ConversationItem)
+- ✅ Mise en place des routes pour les différentes pages (accueil, chat, conversation)
+- ✅ Intégration de Tailwind CSS pour le style
+- ✅ Implémentation des services API pour communiquer avec le backend
+- ✅ Intégration de Socket.IO pour les fonctionnalités en temps réel 
